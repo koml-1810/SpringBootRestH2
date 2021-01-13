@@ -1,0 +1,75 @@
+package com.example.demo.controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.demo.dao.UserRepo;
+import com.example.demo.model.User;
+@RestController
+public class UserController 
+{
+@Autowired
+UserRepo repo;
+@RequestMapping("/")
+public String home()
+{
+	return "home.jsp";
+}
+
+
+ @PostMapping("/user") 
+ public @ResponseBody  User addUser(@RequestBody User user) 
+ {
+ repo.save(user);
+ return user;
+  
+ }
+ @DeleteMapping("/user/{uid}") 
+ public String deleteUser(@PathVariable int uid) 
+ {
+ User a=repo.getOne(uid);
+ repo.delete(a);
+  return "deleted";
+ }
+ 
+ @PutMapping(path="/user",consumes= {"application/json"})
+ public User updateUser(@RequestBody User user)
+ {
+	 repo.save(user);
+	 return user;
+ }
+ 
+@GetMapping(path="/users")
+public List<User> getUsers()
+{
+	
+	/*User alien=repo.findById(aid).orElse(new User());
+	
+	 * System.out.println(repo.findByTech("Java"));
+	 * System.out.println(repo.findByAidGreaterThan(102));
+	 * System.out.println(repo.findByTechSorted("Java"));
+	 
+	*/
+	return repo.findAll();
+	
+}
+@GetMapping("/user/{uid}")
+public  Optional<User> getUser(@PathVariable int uid)
+{
+	return repo.findById(uid);
+}
+}
